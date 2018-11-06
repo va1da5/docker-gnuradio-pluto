@@ -10,7 +10,7 @@ Please ensure that you have the following installed in your Linux system:
 * GIT
 * Docker
 
-User the following commands to create Docker image for GNU Radio Companion.
+Use the following commands to create Docker image for GNU Radio Companion.
 
 ```bash
 git clone git@github.com:va1da5/docker-gnuradio-pluto.git
@@ -31,14 +31,14 @@ There are two common ways to communicate with ADALM-PLUTO: via USB or network co
 ./run-over-network.sh
 ```
 
-When attached to host computer ADALM-PLUTO disguises itself as a network interface. The default IP address of the SDR is 192.168.2.1. This is later used in GNU Radio when defining the device URI `ip:192.168.2.1`.
+When attached to a host computer ADALM-PLUTO disguises itself as a network interface. The default IP address of the PlutoSDR is 192.168.2.1. This is later used in GNU Radio when defining the device URI `ip:192.168.2.1`.
 
 ```bash
 # Start container with USB support
 ./run-over-usb.sh
 ```
 
-Another way to connect to the PLUTO is over USB. This option has a bit better data throughput ([Performance Metrics](https://wiki.analog.com/university/tools/pluto/devs/performance)). The USB identification changes each time when the PLUTO is attached to host machine. To find the ID you need to attach to the container and execute the following command. Moreover, in order to access PlutoSDR over USB root privileges are required (`--user root`)
+Another way to connect to the PlutoSDR is over USB. This option has a bit better data throughput ([Performance Metrics](https://wiki.analog.com/university/tools/pluto/devs/performance)). The USB ID changes each time when the PlutoSDR is attached to a host machine. In order to find the ID you need to attach to the container and execute the following command. Moreover, root privileges are required (`--user root`) when accessing PlutoSDR over USB.
 
 ```bash
 > docker exec -it gnuradio bash
@@ -50,5 +50,5 @@ Available contexts:
 ```
 In this case device URI would be `usb:2.4.5`.
 
-When starting the container using `run-over-usb.sh` the PLUTO USB ID will be automatically presented for your convenience.
+PlutoSDR USB ID will be presented when starting the container using `run-over-usb.sh` script.
 
