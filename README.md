@@ -1,0 +1,54 @@
+# Docker for GNU Radio Companion with ADALM-PLUTO SDR
+
+## Introduction
+
+This Docker image will help you to quickly dive into RF world with ADALM-PLUTO SDR without worrying about Linux complexity. It is going to download, compile and install the latest version of available drivers. Everything required will be in the Docker image, so you don't need to worry about adding unnecessary stuff to your beloved Linux system.
+
+## Installation
+
+Please ensure that you have the following installed in your Linux system:
+* GIT
+* Docker
+
+User the following commands to create Docker image for GNU Radio Companion.
+
+```bash
+git clone git@github.com:va1da5/docker-gnuradio-pluto.git
+cd docker-gnuradio-pluto
+docker build -t gnuradio .
+
+```
+
+## Usage
+
+There are two common ways to communicate with ADALM-PLUTO: via USB or network connection. The repository contains two run scripts for this matter:
+
+* run-over-network.sh
+* run-over-usb.sh
+
+```bash
+# Start container with network support
+./run-over-network.sh
+```
+
+When attached to host computer ADALM-PLUTO disguises itself as a network interface. The default IP address of the SDR is 192.168.2.1. This is later used in GNU Radio when defining the device URI `ip:192.168.2.1`.
+
+```bash
+# Start container with USB support
+./run-over-usb.sh
+```
+
+Another way to connect to the PLUTO is over USB. This option has a bit better data throughput ([Performance Metrics](https://wiki.analog.com/university/tools/pluto/devs/performance)). The USB identification changes each time when the PLUTO is attached to host machine. To find the ID you need to attach to the container and execute the following command. Moreover, in order to access PlutoSDR over USB root privileges are required (`--user root`)
+
+```bash
+> docker exec -it gnuradio bash
+root@thinkpad:~# iio_info -s
+Library version: 0.15 (git tag: ea597c4)
+Compiled with backends: local xml ip usb
+Available contexts:
+	0: 0xx6:bxxx (Analog Devices Inc. PlutoSDR (ADALM-PLUTO)), serial=1044xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx [usb:2.4.5]
+```
+In this case device URI would be `usb:2.4.5`.
+
+When starting the container using `run-over-usb.sh` the PLUTO USB ID will be automatically presented for your convenience.
+
