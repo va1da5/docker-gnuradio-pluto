@@ -9,12 +9,13 @@ if [ $CONTAINER_EXIST ]; then
     docker start gnuradio
 else
     docker run --rm -d \
-        -v /tmp/.X11-unix:/tmp/.X11-unix \
-        -v `pwd`/gnuradio:/home/gnuradio \
+        --volume /tmp/.X11-unix:/tmp/.X11-unix \
+        --volume `pwd`/gnuradio:/home/gnuradio \
         -e DISPLAY=unix$DISPLAY \
         --device /dev/bus/usb \
         --device /dev/snd \
-        --volume=/run/user/${USER_UID}/pulse:/run/user/1000/pulse \
+        --device /dev/dri \
+        --volume /run/user/${USER_UID}/pulse:/run/user/1000/pulse \
         --name gnuradio \
         --user root \
         gnuradio
