@@ -44,11 +44,8 @@ RUN apt-get update && apt upgrade -yf \
         python-qwt5-qt4 \
         python-zmq \
         swig \
-    && apt install -y gnuradio gnuradio-dev xterm git --no-install-recommends \
-    && echo "xterm_executable=/usr/bin/xterm" >> /etc/gnuradio/conf.d/grc.conf \
-    && apt install -y pulseaudio-utils --no-install-recommends
-
-COPY pulse-client.conf /etc/pulse/client.conf
+    && apt install -y gnuradio gnuradio-dev xterm git libvolk1-bin --no-install-recommends \
+    && echo "xterm_executable=/usr/bin/xterm" >> /etc/gnuradio/conf.d/grc.conf
 
 WORKDIR /opt
 
@@ -73,25 +70,33 @@ RUN git clone https://github.com/analogdevicesinc/gr-iio.git \
     && ldconfig
 
 
+RUN apt install -y pulseaudio-utils pulseaudio --no-install-recommends
+
+COPY pulse-client.conf /etc/pulse/client.conf
+
+RUN sed -i "s/enable-shm = yes/enable-shm = no/" /etc/pulse/daemon.conf
+
 RUN apt-get -y clean && apt-get -y autoremove \
     && rm -rf /var/lib/apt/lists/*
 
 ENV UNAME gnuradio
 
-RUN export UNAME=$UNAME UID=1000 GID=1000 && \
-    mkdir -p "/home/${UNAME}" && \
-    echo "${UNAME}:x:${UID}:${GID}:${UNAME} User,,,:/home/${UNAME}:/bin/bash" >> /etc/passwd && \
-    echo "${UNAME}:x:${UID}:" >> /etc/group && \
-    mkdir -p /etc/sudoers.d && \
-    echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/${UNAME} && \
-    chmod 0440 /etc/sudoers.d/${UNAME} && \
-    chown ${UID}:${GID} -R /home/${UNAME} && \
-    gpasswd -a ${UNAME} audio
+RUN export UNAME=$UNAME UID=1000 GID=1000 \
+    && mkdir -p "/home/${UNAME}" \
+    && echo "${UNAME}:x:${UID}:${GID}:${UNAME} User,,,:/home/${UNAME}:/bin/bash" >> /etc/passwd \
+    && echo "${UNAME}:x:${UID}:" >> /etc/group \
+    && mkdir -p /etc/sudoers.d \
+    && echo "${UNAME} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/${UNAME} \
+    && chmod 0440 /etc/sudoers.d/${UNAME} \
+    && chown ${UID}:${GID} -R /home/${UNAME} \
+    && usermod -a -G audio,root ${UNAME} 
 
 USER $UNAME
 
 ENV HOME /home/${UNAME}
 
 WORKDIR $HOME
+
+RUN volk_profile
 
 ENTRYPOINT [ "gnuradio-companion" ]
