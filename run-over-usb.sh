@@ -17,7 +17,6 @@ else
         --device /dev/dri \
         --volume /run/user/${USER_UID}/pulse:/run/user/1000/pulse \
         --name gnuradio \
-        --user root \
         gnuradio
 fi
 
